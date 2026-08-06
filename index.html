@@ -11,7 +11,6 @@
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -131,7 +130,6 @@
   <!-- MODAL FORM INPUT POP-UP (UNIVERSAL CONTAINER) -->
   <div id="modal-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto relative">
-      <!-- Modal Header -->
       <div class="flex justify-between items-center pb-4 border-b border-purple-100">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-bold">
@@ -147,7 +145,6 @@
         </button>
       </div>
 
-      <!-- Form Container Target -->
       <div id="modal-body">
         <!-- Forms dynamically shown here -->
       </div>
@@ -239,9 +236,11 @@
         </div>
       </div>
 
-      <!-- 1. RINGKASAN KEUANGAN -->
+      <!-- 1. RINGKASAN KEUANGAN (UPDATE SUSBUT DENGAN POSISI BARU) -->
       <section id="sec-ringkasan" class="view-sec space-y-6">
+        <!-- BARIS ATAS: REAL SALDO, BIAYA JASA (BIRU), SHOPEE PAY (ORANGE), MODAL PINJAMAN (MERAH) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Real Saldo Toko (Hijau) -->
           <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
               <p class="text-[11px] font-medium text-emerald-100 uppercase tracking-wide">Real Saldo Toko</p>
@@ -249,39 +248,61 @@
             </div>
             <p id="val-saldo" class="text-2xl font-extrabold mt-2 tracking-tight">Rp 0</p>
             <p class="text-[10px] text-emerald-100/80 mt-2 flex items-center gap-1">
-              <i class="fa-solid fa-wallet text-[9px]"></i> Saldo Kas & Bank
+              <i class="fa-solid fa-wallet text-[9px]"></i> Murni Tanpa Jasa & ShopeePay
             </p>
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm relative">
+          <!-- Biaya Jasa (Biru) -->
+          <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Bruto Omset</p>
-              <span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">+Total Masuk</span>
+              <p class="text-[11px] font-medium text-blue-100 uppercase tracking-wide">Biaya Jasa</p>
+              <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">Operasional</span>
             </div>
-            <p id="val-bruto" class="text-2xl font-bold text-slate-800 mt-2 tracking-tight">Rp 0</p>
-            <p class="text-[10px] text-slate-400 mt-2">Total Seluruh Dana Masuk</p>
+            <p id="val-jasa" class="text-2xl font-extrabold mt-2 tracking-tight">Rp 0</p>
+            <p class="text-[10px] text-blue-100/80 mt-2 flex items-center gap-1">
+              <i class="fa-solid fa-hand-holding-dollar text-[9px]"></i> Total Akumulasi Jasa
+            </p>
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm relative">
+          <!-- Shopee Pay (Oranye) -->
+          <div class="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Netto Omset</p>
-              <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Bersih</span>
+              <p class="text-[11px] font-medium text-orange-100 uppercase tracking-wide">Shopee Pay</p>
+              <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">Wallet</span>
             </div>
-            <p id="val-netto" class="text-2xl font-bold text-purple-900 mt-2 tracking-tight">Rp 0</p>
-            <p class="text-[10px] text-slate-400 mt-2">Omset Masuk - Total Pengeluaran</p>
+            <p id="val-shopeepay" class="text-2xl font-extrabold mt-2 tracking-tight">Rp 0</p>
+            <p class="text-[10px] text-orange-100/80 mt-2 flex items-center gap-1">
+              <i class="fa-solid fa-mobile-screen text-[9px]"></i> Saldo e-Wallet Shopee
+            </p>
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm relative">
+          <!-- Modal Pinjaman (Merah) -->
+          <div class="bg-gradient-to-br from-rose-600 to-red-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Dana Produksi</p>
-              <span class="bg-cyan-100 text-cyan-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Operasional</span>
+              <p class="text-[11px] font-medium text-rose-100 uppercase tracking-wide">Modal Pinjaman</p>
+              <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">Liabilitas</span>
             </div>
-            <p id="val-produksi" class="text-2xl font-bold text-cyan-700 mt-2 tracking-tight">Rp 0</p>
-            <p class="text-[10px] text-slate-400 mt-2">CF Produksi + Cetak Lunas</p>
+            <p id="val-pinjaman" class="text-2xl font-extrabold mt-2 tracking-tight">Rp 0</p>
+            <p class="text-[10px] text-rose-100/80 mt-2 flex items-center gap-1">
+              <i class="fa-solid fa-circle-exclamation text-[9px]"></i> Kewajiban Pinjaman
+            </p>
           </div>
         </div>
 
+        <!-- BARIS BAHAH: BRUTO, NETTO, DANA PRODUKSI, DAN LAINNYA -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div class="bg-purple-50/60 p-3.5 rounded-xl border border-purple-100">
+            <p class="text-[10px] font-bold text-purple-700 uppercase">Bruto Omset</p>
+            <p id="val-bruto" class="text-lg font-bold text-slate-800 mt-1">Rp 0</p>
+          </div>
+          <div class="bg-purple-50/60 p-3.5 rounded-xl border border-purple-100">
+            <p class="text-[10px] font-bold text-purple-700 uppercase">Netto Omset</p>
+            <p id="val-netto" class="text-lg font-bold text-purple-900 mt-1">Rp 0</p>
+          </div>
+          <div class="bg-purple-50/60 p-3.5 rounded-xl border border-purple-100">
+            <p class="text-[10px] font-bold text-purple-700 uppercase">Dana Produksi</p>
+            <p id="val-produksi" class="text-lg font-bold text-cyan-700 mt-1">Rp 0</p>
+          </div>
           <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
             <p class="text-[10px] font-bold text-purple-700 uppercase">Dana Akomodasi</p>
             <p id="val-akomodasi" class="text-lg font-bold text-slate-800 mt-1">Rp 0</p>
@@ -291,20 +312,8 @@
             <p id="val-modal-awal" class="text-lg font-bold text-slate-800 mt-1">Rp 0</p>
           </div>
           <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
-            <p class="text-[10px] font-bold text-purple-700 uppercase">Modal Pinjaman</p>
-            <p id="val-pinjaman" class="text-lg font-bold text-orange-600 mt-1">Rp 0</p>
-          </div>
-          <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
-            <p class="text-[10px] font-bold text-purple-700 uppercase">Shopee Pay</p>
-            <p id="val-shopeepay" class="text-lg font-bold text-amber-600 mt-1">Rp 0</p>
-          </div>
-          <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
             <p class="text-[10px] font-bold text-purple-700 uppercase">Dana Lainnya</p>
             <p id="val-lainnya" class="text-lg font-bold text-slate-700 mt-1">Rp 0</p>
-          </div>
-          <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
-            <p class="text-[10px] font-bold text-purple-700 uppercase">Biaya Jasa</p>
-            <p id="val-jasa" class="text-lg font-bold text-amber-700 mt-1">Rp 0</p>
           </div>
           <div class="bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
             <p class="text-[10px] font-bold text-purple-700 uppercase">Biaya Packing</p>
@@ -745,7 +754,6 @@
         body.appendChild(document.getElementById('tpl-form-cashflow').content.cloneNode(true));
       }
 
-      // Set default dates for any date inputs in the modal
       const today = new Date().toISOString().split('T')[0];
       modal.querySelectorAll('input[type="date"]').forEach(i => i.value = today);
 
@@ -859,7 +867,7 @@
       if (document.getElementById('p-promosi')) document.getElementById('p-promosi').value = 0;
     }
 
-    // RENDER FUNCTIONS
+    // RENDER FUNCTIONS (PERHITUNGAN REAL SALDO TOKO TELAH DISESUAIKAN)
     function renderSummary() {
       let totalJasaDB = 0, totalPackingDB = 0, totalPromosiDB = 0, totalCetakLunas = 0;
       let totalKeluar = 0, totalMasuk = 0, totalCashIn = 0, totalCashOut = 0;
@@ -901,39 +909,43 @@
 
       state.masuk.forEach(m => totalMasuk += Number(m.Nominal || 0));
 
-      const realSaldo = (totalMasuk + totalCashIn) - (totalKeluar + totalCashOut);
-      const netto = totalMasuk - totalKeluar;
-
-      const totalDanaProduksi = cfProduksi + totalCetakLunas;
       const totalBiayaJasa = cfJasa + totalJasaDB;
       const totalBiayaPacking = cfPacking + totalPackingDB;
       const totalBiayaPromosi = cfPromosi + totalPromosiDB;
+      const totalDanaProduksi = cfProduksi + totalCetakLunas;
 
+      // PERHITUNGAN REAL SALDO TOKO BARU (TANPA MEMASUKKAN NILAI / TOTAL DARI BIAYA JASA DAN SHOPEE PAY)
+      const rawRealSaldo = (totalMasuk + totalCashIn) - (totalKeluar + totalCashOut);
+      const realSaldo = rawRealSaldo - totalBiayaJasa - cfShopeePay;
+
+      const netto = totalMasuk - totalKeluar;
+
+      // UPDATE TAMPILAN VALUE DASHBOARD
       document.getElementById('val-saldo').innerText = formatRp(realSaldo);
+      document.getElementById('val-jasa').innerText = formatRp(totalBiayaJasa);
+      document.getElementById('val-shopeepay').innerText = formatRp(cfShopeePay);
+      document.getElementById('val-pinjaman').innerText = formatRp(cfPinjaman);
+
       document.getElementById('val-bruto').innerText = formatRp(totalMasuk);
       document.getElementById('val-netto').innerText = formatRp(netto);
-
       document.getElementById('val-produksi').innerText = formatRp(totalDanaProduksi);
       document.getElementById('val-akomodasi').innerText = formatRp(cfAkomodasi);
       document.getElementById('val-modal-awal').innerText = formatRp(cfModalAwal);
-      document.getElementById('val-pinjaman').innerText = formatRp(cfPinjaman);
-      document.getElementById('val-shopeepay').innerText = formatRp(cfShopeePay);
       document.getElementById('val-lainnya').innerText = formatRp(cfLainnya);
-
-      document.getElementById('val-jasa').innerText = formatRp(totalBiayaJasa);
       document.getElementById('val-packing').innerText = formatRp(totalBiayaPacking);
       document.getElementById('val-promosi').innerText = formatRp(totalBiayaPromosi);
 
+      // RENDER CHART
       const ctx = document.getElementById('chart-summary').getContext('2d');
       if (summaryChart) summaryChart.destroy();
       summaryChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Real Saldo', 'Bruto', 'Netto', 'Dana Produksi', 'Biaya Jasa', 'Biaya Packing', 'Biaya Promosi'],
+          labels: ['Real Saldo', 'Biaya Jasa', 'Shopee Pay', 'Modal Pinjaman', 'Bruto Omset', 'Netto Omset'],
           datasets: [{
             label: 'Nominal (Rp)',
-            data: [realSaldo, totalMasuk, netto, totalDanaProduksi, totalBiayaJasa, totalBiayaPacking, totalBiayaPromosi],
-            backgroundColor: ['#10b981', '#8b5cf6', '#6366f1', '#06b6d4', '#f59e0b', '#14b8a6', '#f43f5e'],
+            data: [realSaldo, totalBiayaJasa, cfShopeePay, cfPinjaman, totalMasuk, netto],
+            backgroundColor: ['#10b981', '#2563eb', '#f97316', '#dc2626', '#8b5cf6', '#6366f1'],
             borderRadius: 8
           }]
         },
