@@ -6,6 +6,8 @@
   <title>Dashboard Keuangan - Alkasa Craft</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Library Scan Barcode / QR Code Resi -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
@@ -15,6 +17,24 @@
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    /* Smooth Transition untuk Sidebar Collapse */
+    aside { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-collapsed .sidebar-text { display: none !important; }
+    .sidebar-collapsed .sidebar-center { justify-content: center !important; }
+    .sidebar-collapsed .sidebar-padding { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+    
+    /* Container Scanner Resi */
+    #qr-reader {
+      width: 100%;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: none !important;
+    }
+    #qr-reader video {
+      object-fit: cover;
+      border-radius: 1rem;
+    }
   </style>
 </head>
 <body class="bg-purple-50/50 text-slate-800 h-screen overflow-hidden">
@@ -127,6 +147,41 @@
     </div>
   </div>
 
+  <!-- MODAL SCANNER RESI -->
+  <div id="modal-scanner" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 relative">
+      <div class="flex justify-between items-center pb-3 border-b border-purple-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-barcode"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-800">Scan Resi / Barcode</h3>
+            <p class="text-[11px] text-slate-500">Arahkan kamera ke resi pengiriman</p>
+          </div>
+        </div>
+        <button onclick="stopResiScanner()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Kamera Reader Container -->
+      <div class="relative bg-slate-900 rounded-2xl overflow-hidden min-h-[260px] flex items-center justify-center">
+        <div id="qr-reader"></div>
+      </div>
+
+      <div id="scan-result-feedback" class="text-xs text-center font-medium text-purple-700 bg-purple-50 p-2.5 rounded-xl border border-purple-100 hidden">
+        <i class="fa-solid fa-spinner animate-spin mr-1"></i> Resi terdeteksi, memproses...
+      </div>
+
+      <div class="flex justify-between items-center gap-2 pt-2 text-xs">
+        <button type="button" onclick="stopResiScanner()" class="w-full py-2.5 border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 transition">
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL FORM INPUT POP-UP (UNIVERSAL CONTAINER) -->
   <div id="modal-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto relative">
@@ -155,65 +210,91 @@
   <div id="app-screen" class="hidden h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-purple-50/40 p-0 md:p-3 gap-3">
     
     <!-- SIDEBAR -->
-    <aside class="w-full md:w-64 bg-purple-900 text-purple-100 flex-shrink-0 flex flex-col justify-between md:rounded-2xl shadow-xl overflow-hidden">
-      <div class="flex flex-col flex-1 overflow-y-auto">
-        <div class="p-5 border-b border-purple-800/60 flex justify-between items-center">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-purple-700/60 border border-purple-500/30 flex items-center justify-center text-white font-bold shadow-sm">
+    <aside id="sidebar" class="w-full md:w-64 bg-purple-900 text-purple-100 flex-shrink-0 flex flex-col justify-between md:rounded-2xl shadow-xl overflow-hidden transition-all duration-300">
+      <div class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        
+        <!-- HEADER SIDEBAR + TOGGLE BUTTON -->
+        <div class="p-4 border-b border-purple-800/60 flex justify-between items-center relative">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <div class="w-9 h-9 rounded-xl bg-purple-700/60 border border-purple-500/30 flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0">
               <i class="fa-solid fa-store text-sm"></i>
             </div>
-            <div>
-              <h1 class="font-bold text-sm tracking-wide text-white leading-tight">Alkasa Craft</h1>
-              <p class="text-[10px] text-purple-300">System Dashboard</p>
+            <div class="sidebar-text">
+              <h1 class="font-bold text-sm tracking-wide text-white leading-tight whitespace-nowrap">Alkasa Craft</h1>
+              <p class="text-[10px] text-purple-300 whitespace-nowrap">System Dashboard</p>
             </div>
           </div>
-          <button id="logout-btn" class="md:hidden text-xs bg-rose-600/80 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg transition">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
+          
+          <div class="flex items-center space-x-1">
+            <!-- TOGGLE MINIMIZE SIDEBAR BUTTON (DESKTOP) -->
+            <button id="toggle-sidebar-btn" onclick="toggleSidebar()" class="hidden md:flex text-purple-300 hover:text-white hover:bg-purple-800/60 p-1.5 rounded-lg transition" title="Minimize / Expand Menu">
+              <i id="toggle-icon" class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+
+            <!-- MOBILE LOGOUT BUTTON -->
+            <button id="logout-btn" class="md:hidden text-xs bg-rose-600/80 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg transition">
+              <i class="fa-solid fa-power-off"></i>
+            </button>
+          </div>
         </div>
 
+        <!-- NAVIGATION LINKS -->
         <nav class="p-3 space-y-1.5 text-xs overflow-x-auto md:overflow-y-auto flex md:flex-col gap-1 md:gap-0">
-          <button onclick="nav('ringkasan')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-100 font-medium active-nav">
-            <i class="fa-solid fa-chart-pie w-4 text-purple-300 text-sm"></i><span>Ringkasan Keuangan</span>
+          <button onclick="nav('ringkasan')" title="Ringkasan Keuangan" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-100 font-medium active-nav">
+            <i class="fa-solid fa-chart-pie w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Ringkasan Keuangan</span>
           </button>
-          <button onclick="nav('pesanan')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-cart-shopping w-4 text-purple-300 text-sm"></i><span>Pesanan Masuk</span>
+
+          <button onclick="nav('pesanan')" title="Pesanan Masuk" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-cart-shopping w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Pesanan Masuk</span>
           </button>
-          <button onclick="nav('masuk')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-wallet w-4 text-purple-300 text-sm"></i><span>Keuangan Masuk</span>
+
+          <button onclick="nav('masuk')" title="Keuangan Masuk" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-wallet w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Keuangan Masuk</span>
           </button>
-          <button onclick="nav('database')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-database w-4 text-purple-300 text-sm"></i><span>Database Transaksi</span>
+
+          <button onclick="nav('database')" title="Database Transaksi" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-database w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Database Transaksi</span>
           </button>
-          <button onclick="nav('cashflow')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-arrow-right-arrow-left w-4 text-purple-300 text-sm"></i><span>Cash Flow</span>
+
+          <button onclick="nav('cashflow')" title="Cash Flow" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-arrow-right-arrow-left w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Cash Flow</span>
           </button>
-          <button onclick="nav('stok')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-boxes-stacked w-4 text-purple-300 text-sm"></i><span>Stok Bahan</span>
+
+          <button onclick="nav('stok')" title="Stok Bahan" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-boxes-stacked w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Stok Bahan</span>
           </button>
-          <button onclick="nav('master')" class="nav-btn whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
-            <i class="fa-solid fa-sliders w-4 text-purple-300 text-sm"></i><span>Database Produk</span>
+
+          <button onclick="nav('master')" title="Database Produk" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-sliders w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Database Produk</span>
           </button>
         </nav>
       </div>
 
+      <!-- FOOTER SIDEBAR -->
       <div class="p-3 border-t border-purple-800/60 space-y-2">
-        <div id="sync-status" class="flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-emerald-300 border border-purple-800/40">
-          <span class="text-xs">🟢</span>
-          <span class="truncate">Connected to Google Sheets</span>
+        <div id="sync-status" class="sidebar-padding sidebar-center flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-emerald-300 border border-purple-800/40">
+          <span class="text-xs flex-shrink-0">🟢</span>
+          <span class="truncate sidebar-text">Connected to Google Sheets</span>
         </div>
 
-        <div class="hidden md:flex items-center justify-between p-2 rounded-xl bg-purple-800/40 border border-purple-700/30">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-inner">
+        <div class="hidden md:flex sidebar-padding sidebar-center items-center justify-between p-2 rounded-xl bg-purple-800/40 border border-purple-700/30">
+          <div class="flex items-center space-x-2.5 overflow-hidden">
+            <div class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-inner flex-shrink-0">
               AC
             </div>
-            <div class="text-[11px] leading-tight">
-              <p class="font-semibold text-white">Owner Admin</p>
-              <p class="text-[9px] text-purple-300">Alkasa Craft</p>
+            <div class="text-[11px] leading-tight sidebar-text">
+              <p class="font-semibold text-white truncate">Owner Admin</p>
+              <p class="text-[9px] text-purple-300 truncate">Alkasa Craft</p>
             </div>
           </div>
-          <button id="logout-btn-desktop" onclick="location.reload()" class="text-purple-300 hover:text-white p-1.5 rounded-lg transition" title="Keluar">
+          <button id="logout-btn-desktop" onclick="location.reload()" class="text-purple-300 hover:text-white p-1.5 rounded-lg transition sidebar-text" title="Keluar">
             <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
           </button>
         </div>
@@ -236,7 +317,7 @@
         </div>
       </div>
 
-      <!-- 1. RINGKASAN KEUANGAN (UPDATE SUSBUT DENGAN POSISI BARU) -->
+      <!-- 1. RINGKASAN KEUANGAN -->
       <section id="sec-ringkasan" class="view-sec space-y-6">
         <!-- BARIS ATAS: REAL SALDO, BIAYA JASA (BIRU), SHOPEE PAY (ORANGE), MODAL PINJAMAN (MERAH) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -336,13 +417,19 @@
         </div>
       </section>
 
-      <!-- 2. PESANAN MASUK -->
+      <!-- 2. PESANAN MASUK (FITUR SCAN RESI DITAMBAHKAN DI SINI) -->
       <section id="sec-pesanan" class="view-sec space-y-6 hidden">
         <div class="bg-white p-5 rounded-2xl border border-purple-100 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <h3 class="font-bold text-sm text-slate-800">Daftar Transaksi Keluar / Pesanan</h3>
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <input type="text" onkeyup="filterTable('tbl-pesanan', this.value)" placeholder="Cari..." class="border border-slate-200 rounded-xl px-3 py-2 text-xs w-full sm:w-48 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
+              
+              <!-- TOMBOL SCAN RESI -->
+              <button onclick="startResiScanner()" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3.5 py-2 rounded-xl transition shadow-md text-xs flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-barcode text-xs"></i><span>Scan Resi</span>
+              </button>
+
               <button onclick="openFormModal('pesanan')" class="bg-purple-900 hover:bg-purple-950 text-white font-semibold px-4 py-2 rounded-xl transition shadow-md text-xs flex items-center gap-1.5 whitespace-nowrap">
                 <i class="fa-solid fa-plus text-[10px]"></i><span>Tambah Pesanan</span>
               </button>
@@ -494,7 +581,7 @@
       </div>
       <div>
         <label class="block font-semibold text-slate-600 mb-1">No Pesanan *</label>
-        <input type="text" name="no_pesanan" required placeholder="Contoh: ORD-1029" class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
+        <input type="text" name="no_pesanan" id="p-nopesanan" required placeholder="Contoh: ORD-1029" class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
       </div>
       <div>
         <label class="block font-semibold text-slate-600 mb-1">Kategori Produk *</label>
@@ -520,7 +607,7 @@
       </div>
       <div>
         <label class="block font-semibold text-slate-600 mb-1">Marketplace *</label>
-        <select name="marketplace" required class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
+        <select name="marketplace" id="p-marketplace" required class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
           <option>Shopee</option><option>TikTok Shop</option><option>WhatsApp</option><option>Toco</option><option>Lainnya</option>
         </select>
       </div>
@@ -657,6 +744,7 @@
 
     let state = { pesanan: [], masuk: [], cashflow: [], stok: [], master: [], users: [] };
     let summaryChart = null;
+    let html5QrCode = null;
 
     const titles = {
       ringkasan: 'Ringkasan Keuangan',
@@ -668,18 +756,108 @@
       master: 'Database Stok & Produk (Master Data)'
     };
 
+    // LOGIKA SCANNER RESI
+    function startResiScanner() {
+      const modalScanner = document.getElementById('modal-scanner');
+      modalScanner.classList.remove('hidden');
+
+      if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("qr-reader");
+      }
+
+      const config = { fps: 10, qrbox: { width: 250, height: 180 } };
+
+      html5QrCode.start(
+        { facingMode: "environment" }, 
+        config, 
+        onScanSuccess, 
+        onScanFailure
+      ).catch(err => {
+        console.error("Gagal membuka kamera:", err);
+        alert("Tidak dapat mengakses kamera. Pastikan izin kamera telah diberikan.");
+        stopResiScanner();
+      });
+    }
+
+    function stopResiScanner() {
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+          document.getElementById('modal-scanner').classList.add('hidden');
+        }).catch(err => console.error("Error stopping scanner:", err));
+      } else {
+        document.getElementById('modal-scanner').classList.add('hidden');
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      if (!decodedText) return;
+
+      const feedback = document.getElementById('scan-result-feedback');
+      feedback.classList.remove('hidden');
+
+      // Hentikan scanner terlebih dahulu
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+          document.getElementById('modal-scanner').classList.add('hidden');
+          feedback.classList.add('hidden');
+          
+          // Buka form pesanan dan auto-fill No Pesanan / Resi
+          openFormModal('pesanan');
+          const noPesananInput = document.getElementById('p-nopesanan');
+          if (noPesananInput) {
+            noPesananInput.value = decodedText.trim();
+          }
+
+          // Deteksi Marketplace dari Pattern Barcode jika memungkinkan
+          const textUpper = decodedText.toUpperCase();
+          const mpSelect = document.getElementById('p-marketplace');
+          if (mpSelect) {
+            if (textUpper.includes('SPX') || textUpper.startsWith('JP')) {
+              mpSelect.value = 'Shopee';
+            } else if (textUpper.includes('TK') || textUpper.startsWith('LXAD')) {
+              mpSelect.value = 'TikTok Shop';
+            }
+          }
+        });
+      }
+    }
+
+    function onScanFailure(error) {
+      // Abaikan error konstan pencarian frame
+    }
+
+    // FUNGSI TOGGLE SIDEBAR (MINIMIZE / HIDE MENU)
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const toggleIcon = document.getElementById('toggle-icon');
+
+      sidebar.classList.toggle('sidebar-collapsed');
+
+      if (sidebar.classList.contains('sidebar-collapsed')) {
+        sidebar.classList.remove('md:w-64');
+        sidebar.classList.add('md:w-20');
+        toggleIcon.classList.remove('fa-chevron-left');
+        toggleIcon.classList.add('fa-chevron-right');
+      } else {
+        sidebar.classList.remove('md:w-20');
+        sidebar.classList.add('md:w-64');
+        toggleIcon.classList.remove('fa-chevron-right');
+        toggleIcon.classList.add('fa-chevron-left');
+      }
+    }
+
     function setSyncStatus(type) {
       const el = document.getElementById('sync-status');
       if (!el) return;
       if (type === 'syncing') {
-        el.className = "flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-amber-300 border border-purple-800/40";
-        el.innerHTML = '<span class="text-xs animate-pulse">🟡</span><span class="truncate">Syncing...</span>';
+        el.className = "sidebar-padding sidebar-center flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-amber-300 border border-purple-800/40";
+        el.innerHTML = '<span class="text-xs animate-pulse flex-shrink-0">🟡</span><span class="truncate sidebar-text">Syncing...</span>';
       } else if (type === 'success') {
-        el.className = "flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-emerald-300 border border-purple-800/40";
-        el.innerHTML = '<span class="text-xs">🟢</span><span class="truncate">Connected to Google Sheets</span>';
+        el.className = "sidebar-padding sidebar-center flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-emerald-300 border border-purple-800/40";
+        el.innerHTML = '<span class="text-xs flex-shrink-0">🟢</span><span class="truncate sidebar-text">Connected to Google Sheets</span>';
       } else if (type === 'error') {
-        el.className = "flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-rose-300 border border-purple-800/40";
-        el.innerHTML = '<span class="text-xs">🔴</span><span class="truncate">Sync Error</span>';
+        el.className = "sidebar-padding sidebar-center flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-rose-300 border border-purple-800/40";
+        el.innerHTML = '<span class="text-xs flex-shrink-0">🔴</span><span class="truncate sidebar-text">Sync Error</span>';
       }
     }
 
@@ -714,7 +892,7 @@
         btn.classList.add('text-purple-200/80');
       });
 
-      const activeBtn = event ? event.currentTarget : document.querySelector('.nav-btn');
+      const activeBtn = window.event ? window.event.currentTarget : document.querySelector('.nav-btn');
       if (activeBtn) {
         activeBtn.classList.add('bg-purple-800/80', 'text-white', 'font-semibold');
         activeBtn.classList.remove('text-purple-200/80');
@@ -867,7 +1045,7 @@
       if (document.getElementById('p-promosi')) document.getElementById('p-promosi').value = 0;
     }
 
-    // RENDER FUNCTIONS (PERHITUNGAN REAL SALDO TOKO TELAH DISESUAIKAN)
+    // RENDER FUNCTIONS
     function renderSummary() {
       let totalJasaDB = 0, totalPackingDB = 0, totalPromosiDB = 0, totalCetakLunas = 0;
       let totalKeluar = 0, totalMasuk = 0, totalCashIn = 0, totalCashOut = 0;
@@ -914,13 +1092,11 @@
       const totalBiayaPromosi = cfPromosi + totalPromosiDB;
       const totalDanaProduksi = cfProduksi + totalCetakLunas;
 
-      // PERHITUNGAN REAL SALDO TOKO BARU (TANPA MEMASUKKAN NILAI / TOTAL DARI BIAYA JASA DAN SHOPEE PAY)
       const rawRealSaldo = (totalMasuk + totalCashIn) - (totalKeluar + totalCashOut);
       const realSaldo = rawRealSaldo - totalBiayaJasa - cfShopeePay;
 
       const netto = totalMasuk - totalKeluar;
 
-      // UPDATE TAMPILAN VALUE DASHBOARD
       document.getElementById('val-saldo').innerText = formatRp(realSaldo);
       document.getElementById('val-jasa').innerText = formatRp(totalBiayaJasa);
       document.getElementById('val-shopeepay').innerText = formatRp(cfShopeePay);
@@ -935,7 +1111,6 @@
       document.getElementById('val-packing').innerText = formatRp(totalBiayaPacking);
       document.getElementById('val-promosi').innerText = formatRp(totalBiayaPromosi);
 
-      // RENDER CHART
       const ctx = document.getElementById('chart-summary').getContext('2d');
       if (summaryChart) summaryChart.destroy();
       summaryChart = new Chart(ctx, {
