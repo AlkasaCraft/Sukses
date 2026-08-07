@@ -165,7 +165,6 @@
         </button>
       </div>
 
-      <!-- Kamera Reader Container -->
       <div class="relative bg-slate-900 rounded-2xl overflow-hidden min-h-[260px] flex items-center justify-center">
         <div id="qr-reader"></div>
       </div>
@@ -213,7 +212,6 @@
     <aside id="sidebar" class="w-full md:w-64 bg-purple-900 text-purple-100 flex-shrink-0 flex flex-col justify-between md:rounded-2xl shadow-xl overflow-hidden transition-all duration-300">
       <div class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         
-        <!-- HEADER SIDEBAR + TOGGLE BUTTON -->
         <div class="p-4 border-b border-purple-800/60 flex justify-between items-center relative">
           <div class="flex items-center space-x-3 overflow-hidden">
             <div class="w-9 h-9 rounded-xl bg-purple-700/60 border border-purple-500/30 flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0">
@@ -226,19 +224,16 @@
           </div>
           
           <div class="flex items-center space-x-1">
-            <!-- TOGGLE MINIMIZE SIDEBAR BUTTON (DESKTOP) -->
             <button id="toggle-sidebar-btn" onclick="toggleSidebar()" class="hidden md:flex text-purple-300 hover:text-white hover:bg-purple-800/60 p-1.5 rounded-lg transition" title="Minimize / Expand Menu">
               <i id="toggle-icon" class="fa-solid fa-chevron-left text-xs"></i>
             </button>
 
-            <!-- MOBILE LOGOUT BUTTON -->
             <button id="logout-btn" class="md:hidden text-xs bg-rose-600/80 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg transition">
               <i class="fa-solid fa-power-off"></i>
             </button>
           </div>
         </div>
 
-        <!-- NAVIGATION LINKS -->
         <nav class="p-3 space-y-1.5 text-xs overflow-x-auto md:overflow-y-auto flex md:flex-col gap-1 md:gap-0">
           <button onclick="nav('ringkasan')" title="Ringkasan Keuangan" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-100 font-medium active-nav">
             <i class="fa-solid fa-chart-pie w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
@@ -274,10 +269,15 @@
             <i class="fa-solid fa-sliders w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
             <span class="sidebar-text">Database Produk</span>
           </button>
+
+          <!-- MENU CATATAN -->
+          <button onclick="nav('catatan')" title="Catatan Internal" class="nav-btn sidebar-padding sidebar-center whitespace-nowrap w-full text-left px-3.5 py-3 rounded-xl hover:bg-purple-800/60 transition flex items-center space-x-3 text-purple-200/80 font-medium">
+            <i class="fa-solid fa-note-sticky w-4 text-purple-300 text-sm text-center flex-shrink-0"></i>
+            <span class="sidebar-text">Catatan</span>
+          </button>
         </nav>
       </div>
 
-      <!-- FOOTER SIDEBAR -->
       <div class="p-3 border-t border-purple-800/60 space-y-2">
         <div id="sync-status" class="sidebar-padding sidebar-center flex items-center space-x-2 text-[11px] font-medium px-3 py-2 rounded-xl bg-purple-950/60 text-emerald-300 border border-purple-800/40">
           <span class="text-xs flex-shrink-0">🟢</span>
@@ -304,7 +304,6 @@
     <!-- CONTENT AREA -->
     <main class="flex-1 h-full overflow-y-auto bg-white/80 backdrop-blur-md md:rounded-2xl border border-purple-100 p-4 md:p-6 space-y-6 shadow-sm">
       
-      <!-- TOP HEADER / FILTER BAR -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-purple-100">
         <div>
           <h2 id="page-title" class="text-xl font-bold text-slate-800">Dashboard Keuangan</h2>
@@ -319,9 +318,7 @@
 
       <!-- 1. RINGKASAN KEUANGAN -->
       <section id="sec-ringkasan" class="view-sec space-y-6">
-        <!-- BARIS ATAS: REAL SALDO, BIAYA JASA (BIRU), SHOPEE PAY (ORANGE), MODAL PINJAMAN (MERAH) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Real Saldo Toko (Hijau) -->
           <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
               <p class="text-[11px] font-medium text-emerald-100 uppercase tracking-wide">Real Saldo Toko</p>
@@ -333,7 +330,6 @@
             </p>
           </div>
 
-          <!-- Biaya Jasa (Biru) -->
           <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
               <p class="text-[11px] font-medium text-blue-100 uppercase tracking-wide">Biaya Jasa</p>
@@ -345,7 +341,6 @@
             </p>
           </div>
 
-          <!-- Shopee Pay (Oranye) -->
           <div class="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
               <p class="text-[11px] font-medium text-orange-100 uppercase tracking-wide">Shopee Pay</p>
@@ -357,7 +352,6 @@
             </p>
           </div>
 
-          <!-- Modal Pinjaman (Merah) -->
           <div class="bg-gradient-to-br from-rose-600 to-red-700 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
             <div class="flex justify-between items-start">
               <p class="text-[11px] font-medium text-rose-100 uppercase tracking-wide">Modal Pinjaman</p>
@@ -370,7 +364,6 @@
           </div>
         </div>
 
-        <!-- BARIS BAHAH: BRUTO, NETTO, DANA PRODUKSI, DAN LAINNYA -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           <div class="bg-purple-50/60 p-3.5 rounded-xl border border-purple-100">
             <p class="text-[10px] font-bold text-purple-700 uppercase">Bruto Omset</p>
@@ -417,7 +410,7 @@
         </div>
       </section>
 
-      <!-- 2. PESANAN MASUK (FITUR SCAN RESI DITAMBAHKAN DI SINI) -->
+      <!-- 2. PESANAN MASUK -->
       <section id="sec-pesanan" class="view-sec space-y-6 hidden">
         <div class="bg-white p-5 rounded-2xl border border-purple-100 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -425,7 +418,6 @@
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <input type="text" onkeyup="filterTable('tbl-pesanan', this.value)" placeholder="Cari..." class="border border-slate-200 rounded-xl px-3 py-2 text-xs w-full sm:w-48 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
               
-              <!-- TOMBOL SCAN RESI -->
               <button onclick="startResiScanner()" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3.5 py-2 rounded-xl transition shadow-md text-xs flex items-center gap-1.5 whitespace-nowrap">
                 <i class="fa-solid fa-barcode text-xs"></i><span>Scan Resi</span>
               </button>
@@ -564,6 +556,34 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-purple-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. CATATAN INTERNAL -->
+      <section id="sec-catatan" class="view-sec space-y-6 hidden">
+        <div class="bg-white p-5 rounded-2xl border border-purple-100 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h3 class="font-bold text-sm text-slate-800">Daftar Catatan Internal</h3>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <input type="text" onkeyup="filterTable('tbl-catatan', this.value)" placeholder="Cari catatan..." class="border border-slate-200 rounded-xl px-3 py-2 text-xs w-full sm:w-48 focus:ring-2 focus:ring-purple-500/40 focus:outline-none">
+              <button onclick="openFormModal('catatan')" class="bg-purple-900 hover:bg-purple-950 text-white font-semibold px-4 py-2 rounded-xl transition shadow-md text-xs flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-plus text-[10px]"></i><span>Pesan Baru</span>
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table id="tbl-catatan" class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-purple-50/60 text-purple-900 border-b border-purple-100">
+                  <th class="p-3 w-4/5">Pesan / Catatan</th>
+                  <th class="p-3 w-1/5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-purple-50">
+                <tr><td colspan="2" class="p-3 text-center text-slate-400">Memuat data...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -739,10 +759,24 @@
     </form>
   </template>
 
+  <!-- FORM TEMPLATE: CATATAN -->
+  <template id="tpl-form-catatan">
+    <form id="form-catatan" onsubmit="handleFormSubmitCatatan(event)" class="space-y-4 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-600 mb-1">Catatan / Pesan *</label>
+        <textarea id="inputPesan" required placeholder="Tuliskan pesan atau catatan di sini..." class="w-full border border-slate-200 rounded-xl p-3 h-28 focus:ring-2 focus:ring-purple-500/40 focus:outline-none text-xs leading-relaxed"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+        <button type="button" onclick="closeFormModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold transition">Batal</button>
+        <button type="submit" class="bg-purple-900 hover:bg-purple-950 text-white font-semibold px-6 py-2.5 rounded-xl transition shadow-md">Simpan Pesan</button>
+      </div>
+    </form>
+  </template>
+
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFkiRJNBGnOnESamaIt5VnHSscRJofoZ1k8L9L7BxFUN0dy4s5OifPJvAHajtTxC7g/exec";
 
-    let state = { pesanan: [], masuk: [], cashflow: [], stok: [], master: [], users: [] };
+    let state = { pesanan: [], masuk: [], cashflow: [], stok: [], master: [], users: [], catatan: [] };
     let summaryChart = null;
     let html5QrCode = null;
 
@@ -753,42 +787,10 @@
       database: 'Database Transaksi Terintegrasi',
       cashflow: 'Manajemen Cash Flow',
       stok: 'Manajemen Stok Bahan',
-      master: 'Database Stok & Produk (Master Data)'
+      master: 'Database Stok & Produk (Master Data)',
+      catatan: 'Catatan Internal'
     };
 
-    // FUNGSIONALITAS PARSE RESI DENGAN REGEX PRESISI
-    function parseShippingLabel(extractedText) {
-      let result = {
-        marketplace: null,
-        orderId: null,
-        resi: null
-      };
-
-      if (!extractedText) return result;
-
-      // Deteksi TikTok Shop
-      if (/Order\s*Id/i.test(extractedText) || /J&T/i.test(extractedText) || /TikTok/i.test(extractedText)) {
-        result.marketplace = 'TikTok Shop';
-        const orderMatch = extractedText.match(/Order\s*Id\s*[:\s=]*(\d{15,20})/i);
-        const resiMatch = extractedText.match(/\b(JY\d+|JX\d+|\d{10,15})\b/i);
-
-        if (orderMatch) result.orderId = orderMatch[1];
-        if (resiMatch) result.resi = resiMatch[1];
-      } 
-      // Deteksi Shopee
-      else if (/No\.?\s*Pesanan/i.test(extractedText) || /Shopee/i.test(extractedText) || /SPX/i.test(extractedText)) {
-        result.marketplace = 'Shopee';
-        const orderMatch = extractedText.match(/No\.?\s*Pesanan\s*[:\s=]*([A-Z0-9]{12,18})/i);
-        const resiMatch = extractedText.match(/\b(SPXID\d+)\b/i) || extractedText.match(/No\.?\s*Resi\s*[:\s=]*([A-Z0-9-]+)/i);
-
-        if (orderMatch) result.orderId = orderMatch[1];
-        if (resiMatch) result.resi = resiMatch[1];
-      }
-
-      return result;
-    }
-
-    // LOGIKA SCANNER RESI
     function startResiScanner() {
       const modalScanner = document.getElementById('modal-scanner');
       modalScanner.classList.remove('hidden');
@@ -827,48 +829,32 @@
       const feedback = document.getElementById('scan-result-feedback');
       feedback.classList.remove('hidden');
 
-      // Hentikan scanner terlebih dahulu
       if (html5QrCode && html5QrCode.isScanning) {
         html5QrCode.stop().then(() => {
           document.getElementById('modal-scanner').classList.add('hidden');
           feedback.classList.add('hidden');
           
-          // Buka form pesanan
           openFormModal('pesanan');
-
-          // Ekstrak informasi dari teks resi
-          const parsed = parseShippingLabel(decodedText);
           const noPesananInput = document.getElementById('p-nopesanan');
-          const mpSelect = document.getElementById('p-marketplace');
-
-          // Terapkan No. Pesanan
           if (noPesananInput) {
-            noPesananInput.value = parsed.orderId || parsed.resi || decodedText.trim();
+            noPesananInput.value = decodedText.trim();
           }
 
-          // Terapkan Marketplace jika berhasil terdeteksi
+          const textUpper = decodedText.toUpperCase();
+          const mpSelect = document.getElementById('p-marketplace');
           if (mpSelect) {
-            if (parsed.marketplace) {
-              mpSelect.value = parsed.marketplace;
-            } else {
-              // Fallback manual jika format tidak baku
-              const textUpper = decodedText.toUpperCase();
-              if (textUpper.includes('SPX') || textUpper.startsWith('JP')) {
-                mpSelect.value = 'Shopee';
-              } else if (textUpper.includes('TK') || textUpper.startsWith('LXAD') || textUpper.startsWith('JY')) {
-                mpSelect.value = 'TikTok Shop';
-              }
+            if (textUpper.includes('SPX') || textUpper.startsWith('JP')) {
+              mpSelect.value = 'Shopee';
+            } else if (textUpper.includes('TK') || textUpper.startsWith('LXAD')) {
+              mpSelect.value = 'TikTok Shop';
             }
           }
         });
       }
     }
 
-    function onScanFailure(error) {
-      // Abaikan error konstan pencarian frame
-    }
+    function onScanFailure(error) {}
 
-    // FUNGSI TOGGLE SIDEBAR (MINIMIZE / HIDE MENU)
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const toggleIcon = document.getElementById('toggle-icon');
@@ -903,7 +889,6 @@
       }
     }
 
-    // AUTHENTICATION
     document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const u = document.getElementById('login-user').value.trim();
@@ -921,7 +906,6 @@
 
     document.getElementById('logout-btn').addEventListener('click', () => location.reload());
 
-    // NAVIGATION SYSTEM
     function nav(secId) {
       document.querySelectorAll('.view-sec').forEach(el => el.classList.add('hidden'));
       document.getElementById('sec-' + secId).classList.remove('hidden');
@@ -939,9 +923,12 @@
         activeBtn.classList.add('bg-purple-800/80', 'text-white', 'font-semibold');
         activeBtn.classList.remove('text-purple-200/80');
       }
+
+      if (secId === 'catatan') {
+        muatDataCatatan();
+      }
     }
 
-    // MODAL CONTROL & DYNAMIC FORM RENDER
     function openFormModal(type) {
       const modal = document.getElementById('modal-form');
       const body = document.getElementById('modal-body');
@@ -972,6 +959,11 @@
         subtitle.innerText = 'Catat mutasi arus kas masuk atau keluar';
         icon.className = 'fa-solid fa-arrow-right-arrow-left';
         body.appendChild(document.getElementById('tpl-form-cashflow').content.cloneNode(true));
+      } else if (type === 'catatan') {
+        title.innerText = 'Tambah Pesan Baru';
+        subtitle.innerText = 'Tuliskan catatan internal atau pengingat tim';
+        icon.className = 'fa-solid fa-note-sticky';
+        body.appendChild(document.getElementById('tpl-form-catatan').content.cloneNode(true));
       }
 
       const today = new Date().toISOString().split('T')[0];
@@ -984,7 +976,6 @@
       document.getElementById('modal-form').classList.add('hidden');
     }
 
-    // DATA FETCHING & RENDERING
     async function loadData() {
       if (SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
         setSyncStatus('error');
@@ -1030,7 +1021,6 @@
       document.getElementById('alert-modal').classList.add('hidden');
     }
 
-    // DROPDOWNS & AUTOFILL IN MODAL
     function populateMasterDropdowns() {
       const katSelect = document.getElementById('p-kategori');
       const v1Select = document.getElementById('p-varian1');
@@ -1087,7 +1077,6 @@
       if (document.getElementById('p-promosi')) document.getElementById('p-promosi').value = 0;
     }
 
-    // RENDER FUNCTIONS
     function renderSummary() {
       let totalJasaDB = 0, totalPackingDB = 0, totalPromosiDB = 0, totalCetakLunas = 0;
       let totalKeluar = 0, totalMasuk = 0, totalCashIn = 0, totalCashOut = 0;
@@ -1311,12 +1300,80 @@
           <td class="p-2.5 font-semibold text-emerald-600">${formatRp(m.Harga_Jual)}</td>
           <td class="p-2.5">${formatRp(m.Biaya_Cetak)}</td><td class="p-2.5">${formatRp(m.Biaya_Jasa)}</td>
           <td class="p-2.5">${formatRp(m.Biaya_Packing)}</td><td class="p-2.5">${formatRp(m.Biaya_Promosi)}</td>
-          <td class="p-2.5"><button onclick="deleteMaster('${m.ID}')" class="text-rose-600 hover:underline">Hapus</button></td>
+          <td class="p-2.5"><button onclick="deleteMaster('${m.ID}')" class="text-rose-600 hover:underline font-medium">Hapus</button></td>
         </tr>`;
       });
     }
 
-    // FORM SUBMISSION HANDLER
+    // FUNGSI KHUSUS LOGIKA MENU CATATAN
+    function muatDataCatatan() {
+      if (window.google && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(renderTabelCatatan).getPesanData();
+      } else {
+        renderTabelCatatan(state.catatan || []);
+      }
+    }
+
+    function renderTabelCatatan(data) {
+      const tbody = document.querySelector('#tbl-catatan tbody');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" class="p-3 text-center text-slate-400">Tidak ada pesan / catatan.</td></tr>';
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-purple-50/30 transition";
+        tr.innerHTML = `
+          <td class="p-3 text-slate-700 whitespace-pre-wrap leading-relaxed">${item.pesan || item.Pesan}</td>
+          <td class="p-3 text-center">
+            <button class="text-rose-600 hover:text-rose-800 hover:underline font-medium text-xs" onclick="prosesHapusCatatan(${item.rowIndex})">
+              <i class="fa-solid fa-trash mr-1"></i>Hapus
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleFormSubmitCatatan(e) {
+      e.preventDefault();
+      const pesan = document.getElementById('inputPesan').value.trim();
+      if (!pesan) {
+        alert('Pesan tidak boleh kosong!');
+        return;
+      }
+
+      closeFormModal();
+      setSyncStatus('syncing');
+
+      if (window.google && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(() => {
+          setSyncStatus('success');
+          muatDataCatatan();
+        }).simpanPesanBaru(pesan);
+      } else {
+        // Fallback simpan via Fetch API/Post jika tidak pakai google.script.run
+        postData('Catatan', [new Date().toISOString(), pesan]);
+      }
+    }
+
+    function prosesHapusCatatan(rowIndex) {
+      if (confirm('Apakah Anda yakin ingin menghapus pesan ini?')) {
+        setSyncStatus('syncing');
+        if (window.google && google.script && google.script.run) {
+          google.script.run.withSuccessHandler(() => {
+            setSyncStatus('success');
+            muatDataCatatan();
+          }).hapusPesan(rowIndex);
+        } else {
+          alert('Berhasil menghapus catatan.');
+        }
+      }
+    }
+
     async function handleFormSubmit(e, sheet, formEl) {
       e.preventDefault();
 
