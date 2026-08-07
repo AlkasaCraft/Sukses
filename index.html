@@ -756,6 +756,38 @@
       master: 'Database Stok & Produk (Master Data)'
     };
 
+    // FUNGSIONALITAS PARSE RESI DENGAN REGEX PRESISI
+    function parseShippingLabel(extractedText) {
+      let result = {
+        marketplace: null,
+        orderId: null,
+        resi: null
+      };
+
+      if (!extractedText) return result;
+
+      // Deteksi TikTok Shop
+      if (/Order\s*Id/i.test(extractedText) || /J&T/i.test(extractedText) || /TikTok/i.test(extractedText)) {
+        result.marketplace = 'TikTok Shop';
+        const orderMatch = extractedText.match(/Order\s*Id\s*[:\s=]*(\d{15,20})/i);
+        const resiMatch = extractedText.match(/\b(JY\d+|JX\d+|\d{10,15})\b/i);
+
+        if (orderMatch) result.orderId = orderMatch[1];
+        if (resiMatch) result.resi = resiMatch[1];
+      } 
+      // Deteksi Shopee
+      else if (/No\.?\s*Pesanan/i.test(extractedText) || /Shopee/i.test(extractedText) || /SPX/i.test(extractedText)) {
+        result.marketplace = 'Shopee';
+        const orderMatch = extractedText.match(/No\.?\s*Pesanan\s*[:\s=]*([A-Z0-9]{12,18})/i);
+        const resiMatch = extractedText.match(/\b(SPXID\d+)\b/i) || extractedText.match(/No\.?\s*Resi\s*[:\s=]*([A-Z0-9-]+)/i);
+
+        if (orderMatch) result.orderId = orderMatch[1];
+        if (resiMatch) result.resi = resiMatch[1];
+      }
+
+      return result;
+    }
+
     // LOGIKA SCANNER RESI
     function startResiScanner() {
       const modalScanner = document.getElementById('modal-scanner');
@@ -801,21 +833,31 @@
           document.getElementById('modal-scanner').classList.add('hidden');
           feedback.classList.add('hidden');
           
-          // Buka form pesanan dan auto-fill No Pesanan / Resi
+          // Buka form pesanan
           openFormModal('pesanan');
+
+          // Ekstrak informasi dari teks resi
+          const parsed = parseShippingLabel(decodedText);
           const noPesananInput = document.getElementById('p-nopesanan');
+          const mpSelect = document.getElementById('p-marketplace');
+
+          // Terapkan No. Pesanan
           if (noPesananInput) {
-            noPesananInput.value = decodedText.trim();
+            noPesananInput.value = parsed.orderId || parsed.resi || decodedText.trim();
           }
 
-          // Deteksi Marketplace dari Pattern Barcode jika memungkinkan
-          const textUpper = decodedText.toUpperCase();
-          const mpSelect = document.getElementById('p-marketplace');
+          // Terapkan Marketplace jika berhasil terdeteksi
           if (mpSelect) {
-            if (textUpper.includes('SPX') || textUpper.startsWith('JP')) {
-              mpSelect.value = 'Shopee';
-            } else if (textUpper.includes('TK') || textUpper.startsWith('LXAD')) {
-              mpSelect.value = 'TikTok Shop';
+            if (parsed.marketplace) {
+              mpSelect.value = parsed.marketplace;
+            } else {
+              // Fallback manual jika format tidak baku
+              const textUpper = decodedText.toUpperCase();
+              if (textUpper.includes('SPX') || textUpper.startsWith('JP')) {
+                mpSelect.value = 'Shopee';
+              } else if (textUpper.includes('TK') || textUpper.startsWith('LXAD') || textUpper.startsWith('JY')) {
+                mpSelect.value = 'TikTok Shop';
+              }
             }
           }
         });
